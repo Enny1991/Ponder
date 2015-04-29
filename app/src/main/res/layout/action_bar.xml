@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="fill_horizontal"
+    android:background="@color/my_yellow">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal"
+    android:paddingRight="8dip"
+    android:paddingLeft="8dip"
+    android:background="@color/white"
+    android:minHeight="40px"
+    android:gravity="right">
+
+    <ImageView
+        android:src="@drawable/owl_icon_ponder2"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="left|center_vertical"
+        android:id="@+id/barpic" />
+
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="fill_parent"></LinearLayout>
+
+
+    <Button
+        android:id="@+id/action_bar_sent"
+        android:background="@drawable/card1"
+        style="@style/ActionBarButtonOffWhite"
+        android:layout_width="22dp"
+        android:layout_height="32dp"
+        android:layout_gravity="center_vertical"
+        android:gravity="right" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="10dp"
+        android:layout_height="fill_parent"></LinearLayout>
+
+    <Button
+        android:id="@+id/action_bar_staff"
+        android:background="@drawable/star1"
+        style="@style/ActionBarButtonOffWhite"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="center_vertical" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="10dp"
+        android:layout_height="match_parent"></LinearLayout>
+
+    <Button
+        android:id="@+id/action_bar_locations"
+        android:background="@drawable/sett1"
+        style="@style/ActionBarButtonOffWhite"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="center_vertical" />
+
+</LinearLayout>
+
+</RelativeLayout>

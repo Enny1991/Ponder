@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="card_bg">#00000000</color>
+    <color name="card_outline">#D0D0CE</color>
+    <color name="my_yellow">#fec30d</color>
+    <color name="white">#efebe0</color>
+    <color name="black">#000000</color>
+    <color name="bg_gradient_start">#EB5038</color>
+    <color name="bg_gradient_end">#CA3822</color>
+    <color name="bg_button_login">#A92815</color>
+    <color name="fb_blue">#3b5998</color>
+    <color name="gp_red">#d34836</color>
+    <color name="action_bar">#ff0d0d0d</color>
+    <color name="off_white">#99ffffff</color>
+</resources>
