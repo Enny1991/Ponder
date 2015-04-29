@@ -141,6 +141,7 @@ public class NextPageFragment extends Fragment implements TokenCompleteTextView.
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         toolBox = ToolBox.getInstance();
+        Log.d("little","comment for GitHub");
         rootView = inflater.inflate(R.layout.activity_next_page, container, false);
         context = this;
 
