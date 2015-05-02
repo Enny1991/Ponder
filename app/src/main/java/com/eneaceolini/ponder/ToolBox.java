@@ -1,6 +1,7 @@
 package com.eneaceolini.ponder;
 
 import android.graphics.Bitmap;
+import android.support.v4.view.ViewPager;
 import android.widget.Button;
 
 /**
@@ -21,6 +22,7 @@ public class ToolBox {
     CollectionCard myColl;
     NonSwipeableViewPager lowerViewPager ;
     public InternalFragmentHolder callToSwitch;
+    public ViewPager toGetIn;
 
 
 

@@ -1,6 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/my_yellow"
@@ -12,7 +12,6 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
 
-        android:layout_weight="1"
         android:paddingTop="-20dp">
 
         <LinearLayout
@@ -127,6 +126,13 @@
         </LinearLayout>
 
     </RelativeLayout>
+
+    <view
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        class="android.support.v4.view.ViewPager"
+        android:id="@+id/to_get_in"
+        android:visibility="gone" />
 
 
 </LinearLayout>

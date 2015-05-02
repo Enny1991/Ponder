@@ -1,37 +1,27 @@
 package com.eneaceolini.ponder;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.ViewPager;
 
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.AttributeSet;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class FragmentHolderTest extends ActionBarActivity {
@@ -86,91 +76,39 @@ public class FragmentHolderTest extends ActionBarActivity {
                 R.layout.action_bar,
                 null);
 
-        ImageView pic = (ImageView)actionBarLayout.findViewById(R.id.barpic);
-        if(toolBox.myPhoto != null) pic.setImageBitmap(toolBox.myPhoto);
+        //ImageView pic = (ImageView)actionBarLayout.findViewById(R.id.barpic);
+        if(toolBox.myPhoto != null) {
 
+
+                //HOME.setIcon(new BitmapDrawable(toolBox.myPhoto));
+
+        }
         // Set up your ActionBar
-        //actionBar = getActionBar();
         actionBar = getSupportActionBar();
-        actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.rect2));
-        actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_SHOW_HOME);
-        actionBar.setCustomView(actionBarLayout);
-        actionBar.setCustomView(actionBarLayout,new ActionBar.LayoutParams(android.app.ActionBar.LayoutParams.MATCH_PARENT, android.app.ActionBar.LayoutParams.MATCH_PARENT));
-        Toolbar parent =(Toolbar) actionBarLayout.getParent();
-        parent.setContentInsetsAbsolute(0, 0);
-        //actionBar.setElevation(0);
-
-
-        // cards
-        actionBarSent = (Button) findViewById(R.id.action_bar_sent);
-        actionBarSent.setBackgroundResource(R.drawable.card2);
-        actionBarSent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                open2();
-            }
-        });
-        //actionBarSent.setText("Sent");
-
-        // star button
-        actionBarStaff = (Button) findViewById(R.id.action_bar_staff);
-        //actionBarStaff.setOnClickListener(new myClickStar());//actionBarStaff.setText("Staff");
-        actionBarStaff.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                open3();
-            }
-        });
-        // setts
-        actionBarLocations = (Button) findViewById(R.id.action_bar_locations);
-        actionBarLocations.setBackgroundResource(R.drawable.sett1);
-        actionBarLocations.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                open();
-            }
-        });
-        //actionBarLocations.setText("HIPPA Locations");
+        actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.action_bar_back));
+        actionBar.setIcon(R.drawable.ic_launcher);
 
     }
 
-    public void open(){ //settings
-        //if(secondPagerAdapter != null) onBackPressed();
+    public void open3(){ //settings
         mViewPager.setCurrentItem(2);
-        actionBarStaff.setBackgroundResource(R.drawable.star1);
-        actionBarSent.setBackgroundResource(R.drawable.card1);
-        actionBarLocations.setBackgroundResource(R.drawable.sett2);
         toolBox.isFirst = false;
     }
 
-    public void open3(){ // liked cards
-        //if(secondPagerAdapter != null) onBackPressed();
+    public void open2(){ // liked cards
         mViewPager.setCurrentItem(1);
-        actionBarSent.setBackgroundResource(R.drawable.card1);
-        mapFrag = null;
-        actionBarStaff.setBackgroundResource(R.drawable.star2);
-        actionBarLocations.setBackgroundResource(R.drawable.sett1);
         toolBox.isFirst = false;
     }
 
-    public void open2(){ // search
-        //if(secondPagerAdapter != null) onBackPressed();
+    public void open(){ // search
         mViewPager.setCurrentItem(0);
-        actionBarSent.setBackgroundResource(R.drawable.card2);
-        actionBarStaff.setBackgroundResource(R.drawable.star1);
-        actionBarLocations.setBackgroundResource(R.drawable.sett1);
     }
 
 
 
     public void doubleTap(CardModel obj){
         this.obj = obj;
-
-
     }
 
 
@@ -240,7 +178,72 @@ public class FragmentHolderTest extends ActionBarActivity {
         super.onDestroyView();
     }
 */
+
+    MenuItem card ;
+    MenuItem star ;
+    MenuItem sett ;
+    MenuItem HOME;
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_activity_actions, menu);
+        //HOME = menu.findItem(android.R.id.home);
+        //HOME.setIcon(new BitmapDrawable(toolBox.myPhoto));
+        card = menu.getItem(0);
+        star = menu.getItem(1);
+        sett = menu.getItem(2);
+        return super.onCreateOptionsMenu(menu);
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                if(!exit) {
+                    Toast.makeText(this, "Sure you want to Log Out", Toast.LENGTH_LONG).show();
+                    //item.setIm(new BitmapDrawable(toolBox.myPhoto));
+                    exit=true;
+                }
+                else
+                    super.onBackPressed();
+                return true;
+            case R.id.action_search:
+                card.setIcon(getResources().getDrawable(R.drawable.card2));
+                sett.setIcon(getResources().getDrawable(R.drawable.sett1));
+                star.setIcon(getResources().getDrawable(R.drawable.star1));
+                open();
+                return true;
+            case R.id.action_star:
+                card.setIcon(getResources().getDrawable(R.drawable.card1));
+                sett.setIcon(getResources().getDrawable(R.drawable.sett1));
+                star.setIcon(getResources().getDrawable(R.drawable.star2));
+                open2();
+                return true;
+            case R.id.action_settings:
+                card.setIcon(getResources().getDrawable(R.drawable.card1));
+                sett.setIcon(getResources().getDrawable(R.drawable.sett2));
+                star.setIcon(getResources().getDrawable(R.drawable.star1));
+                open3();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    boolean exit = false;
+
+    @Override
+    public void onBackPressed() {
+        if(!exit)
+        Toast.makeText(this,"Sure you want to Log Out",Toast.LENGTH_LONG).show();
+        else
+        super.onBackPressed();
+    }
+}
 
 
 

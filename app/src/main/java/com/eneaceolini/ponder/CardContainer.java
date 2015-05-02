@@ -33,10 +33,12 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnticipateOvershootInterpolator;
 import android.view.animation.CycleInterpolator;
 import android.view.animation.LinearInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.view.animation.RotateAnimation;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
@@ -726,8 +728,6 @@ public class CardContainer extends AdapterView<ListAdapter> {
         public boolean onSingleTapConfirmed(MotionEvent e)
         {
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     CardModel cardModel = (CardModel) getAdapter().getItem(selectedItemIndex);
-
             //mainActivity.switchFragments(cardModel);
 
             final View topCard = mTopCard;
@@ -749,9 +749,8 @@ public class CardContainer extends AdapterView<ListAdapter> {
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    toolBox.callToSwitch.switchFragments();
-                }
 
+                }
                 @Override
                 public void onAnimationRepeat(Animation animation) {
 
@@ -761,10 +760,23 @@ public class CardContainer extends AdapterView<ListAdapter> {
             TranslateAnimation anim2 = new TranslateAnimation(0,0,0,((CardContainer)topCard.getParent()).getHeight());
             anim2.setDuration(800);
             anim2.setInterpolator(new AnticipateOvershootInterpolator());
+
+
+            TranslateAnimation anim3 = new TranslateAnimation(0,1000,0,0);
+            toolBox.toGetIn.setVisibility(View.VISIBLE);
+            anim3.setDuration(800);
+            anim3.setInterpolator(new OvershootInterpolator());
+            anim3.setStartOffset(400);
+            anim3.setFillAfter(true);
+            toolBox.toGetIn.startAnimation(anim3);
+
+
             sView.startAnimation(anim);
             topCard.startAnimation(anim2);
 
            ((CardContainer) topCard.getParent()).startAnimation(anim2);
+
+
 
 
 

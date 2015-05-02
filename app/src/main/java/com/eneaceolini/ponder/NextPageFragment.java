@@ -22,6 +22,9 @@ import android.os.Bundle;
 import android.os.StrictMode;
 
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -98,6 +101,8 @@ public class NextPageFragment extends Fragment implements TokenCompleteTextView.
     Person[] people;
     ArrayAdapter<Person> adapter;
     TextView sorry;
+    DemoCollectionPagerAdapter mDemoCollectionPagerAdapter;
+    ViewPager mViewPager;
 
 
 
@@ -145,6 +150,15 @@ public class NextPageFragment extends Fragment implements TokenCompleteTextView.
         rootView = inflater.inflate(R.layout.activity_next_page, container, false);
         context = this;
 
+        mDemoCollectionPagerAdapter = new DemoCollectionPagerAdapter(getChildFragmentManager());
+
+        // Set up the ViewPager, attaching the adapter.
+        mViewPager = (ViewPager) rootView.findViewById(R.id.to_get_in);
+        mViewPager.setAdapter(mDemoCollectionPagerAdapter);
+        mViewPager.setOffscreenPageLimit(3);
+        mViewPager.setX(-1000);
+        toolBox.toGetIn = mViewPager;
+
         typeFace = Typeface.createFromAsset(getActivity().getAssets(),
                                                                 "fonts/Cookie-Regular.ttf");
         typeFace2 = Typeface.createFromAsset(getActivity().getAssets(),
@@ -165,7 +179,7 @@ public class NextPageFragment extends Fragment implements TokenCompleteTextView.
 
         progBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
         progBar.setIndeterminate(true);
-        progBar.getIndeterminateDrawable().setColorFilter(new LightingColorFilter(0xFF000000, 0xF68C20));
+        progBar.getIndeterminateDrawable().setColorFilter(new LightingColorFilter(0xFF000000, 0x389289));
         //tagLayout = (LinearLayout)rootView.findViewById(R.id.tagLayout);
 
         //CheckConnection
@@ -668,5 +682,40 @@ String ss="";
         super.onDestroyView();
     }
     */
+
+
+
+    public class DemoCollectionPagerAdapter extends FragmentStatePagerAdapter {
+
+
+        public DemoCollectionPagerAdapter(FragmentManager fm) {
+
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int i) {
+            switch (i) {
+                case 0:
+                    return new OnlyCardFragment(toolBox.callToSwitch);
+                case 1:
+
+                    return new OnlyCardFragment(toolBox.callToSwitch);
+                default:
+                    return new OnlyCardFragment(toolBox.callToSwitch);
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return 3;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return "OBJECT " + (position + 1);
+        }
+    }
+
 
 }

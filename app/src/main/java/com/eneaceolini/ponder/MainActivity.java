@@ -801,7 +801,6 @@ public class MainActivity extends Activity implements OnClickListener,
 
         startActivity(enter);
         overridePendingTransition(R.anim.transition1, R.anim.transition2);
-        finish();
     }
 
     public void nextPage(View v){

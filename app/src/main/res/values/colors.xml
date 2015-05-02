@@ -12,4 +12,6 @@
     <color name="gp_red">#d34836</color>
     <color name="action_bar">#ff0d0d0d</color>
     <color name="off_white">#99ffffff</color>
+    <color name="teal" >#389289</color>
+
 </resources>

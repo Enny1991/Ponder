@@ -1,8 +1,17 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat">
-        <item name="android:windowContentOverlay">@null</item>
+    <style name="AppTheme" parent="Theme.AppCompat.Light">
+        <item name="android:homeAsUpIndicator">@drawable/owl_icon_ponder2</item>
+    </style>
+
+    <style name="ActionBar" parent="android:Widget.Holo.Light.ActionBar.Solid.Inverse">
+    </style>
+
+
+
+    <style name="ActionBarWithoutTitle" parent="@style/ActionBar">
+        <item name="android:displayOptions">useLogo</item>
     </style>
 
     <style name="PauseDialog" parent="@android:style/Theme.Holo.Dialog">
@@ -14,9 +23,6 @@
         <item name="android:windowExitAnimation">@anim/fadeout</item>
     </style>
 
-    <style name="Theme.Default" parent="@android:style/Theme"></style>
-    <style name="Theme.NoTitle" parent="@android:style/Theme.NoTitleBar"></style>
-    <style name="Theme.FullScreen" parent="@android:style/Theme.NoTitleBar.Fullscreen"></style>
 
 
 

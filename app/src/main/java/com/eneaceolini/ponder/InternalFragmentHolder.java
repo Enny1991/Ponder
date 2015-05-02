@@ -7,7 +7,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.view.animation.AnticipateOvershootInterpolator;
+import android.view.animation.OvershootInterpolator;
+import android.view.animation.TranslateAnimation;
 
 
 public class InternalFragmentHolder extends Fragment {
@@ -77,15 +79,12 @@ public class InternalFragmentHolder extends Fragment {
 
     public void switchFragments(){
 
+        toolBox.toGetIn.setVisibility(View.VISIBLE);
+        TranslateAnimation anim = new TranslateAnimation(1000,0,0,0);
+        anim.setDuration(400);
+        anim.setInterpolator(new OvershootInterpolator());
+        toolBox.toGetIn.startAnimation(anim);
 
-        getChildFragmentManager().beginTransaction()
-                .setCustomAnimations(
-                        R.anim.transition3,
-                        R.anim.transition4)
-                .replace(R.id.internal_container,ocf)
-                .commit();
-
-        //TODO
     }
 
     public void switchFragments2(){
