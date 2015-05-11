@@ -12,6 +12,9 @@
 
     <!-- ActionBar color strip -->
     <dimen name="colorstrip">5dp</dimen>
+
+    <dimen name="tool_bar_top_padding">0dp</dimen>
+
 </resources>
 
 

@@ -37,6 +37,8 @@ interface TableNotes {
 
     public String COLUMN_IMG = "image";
 
+    public String COLUMN_UID = "uid";
+
 
 
 

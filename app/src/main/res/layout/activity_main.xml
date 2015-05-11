@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/my_yellow"
-    tools:context="com.eneaceolini.ponder.NextPage">
+    >
 
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -54,7 +54,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         fb:login_text="Sign in with Facebook"
-        fb:logout_text=""
+        fb:logout_text="Sign out from Facebook"
         android:padding="5dp"
         android:layout_marginTop="5dp" />
 

@@ -3,17 +3,17 @@
     xmlns:yourapp="http://schemas.android.com/apk/res-auto">
 
     <item android:id="@+id/action_search"
-        android:icon="@drawable/card2"
+        android:icon="@drawable/ic_card_sel"
         yourapp:showAsAction="always"
         android:title="ciao"/>
     <item android:id="@+id/action_star"
-        android:icon="@drawable/star1"
+        android:icon="@drawable/ic_star"
         android:title="ciao2"
         yourapp:showAsAction="always"/>
     <item yourapp:showAsAction="always"
         android:id="@+id/action_settings"
         android:title="Settings"
-        android:icon="@drawable/sett1"
+        android:icon="@drawable/ic_gear"
         ></item>
 
 

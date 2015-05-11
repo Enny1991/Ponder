@@ -1,11 +1,10 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/my_yellow"
     tools:context="com.eneaceolini.ponder.NextPage"
-    android:id="@+id/pager">
+    android:id="@+id/base">
 
 
     <RelativeLayout
@@ -34,7 +33,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionDone"
-                android:textColor="@android:color/darker_gray"
+                android:textColor="#fff"
                 android:textSize="19sp"
                 android:nextFocusDown="@+id/editText"
                 android:inputType="text|textNoSuggestions|textMultiLine"
@@ -44,8 +43,8 @@
             <Button
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:background="@drawable/ic_action_search"
-                android:id="@+id/button" />
+                android:id="@+id/button"
+                style="@style/search" />
             <!--
             <EditText
                 android:layout_width="0dp"
@@ -127,12 +126,5 @@
 
     </RelativeLayout>
 
-    <view
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        class="android.support.v4.view.ViewPager"
-        android:id="@+id/to_get_in"
-        android:visibility="gone" />
 
-
-</LinearLayout>
+</RelativeLayout>

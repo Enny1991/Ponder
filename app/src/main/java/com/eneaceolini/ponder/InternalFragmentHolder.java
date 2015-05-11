@@ -1,6 +1,7 @@
 package com.eneaceolini.ponder;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -63,8 +64,8 @@ public class InternalFragmentHolder extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_internal_fragment_holder, container, false);
         toolBox = ToolBox.getInstance();
-        toolBox.callToSwitch = this;
-        ocf = new OnlyCardFragment(this);
+
+        //ocf = OnlyCardFragment.newInstance(new CardModel());
         if(savedInstanceState == null){
             npf.mainActivity = this.mainActivity;
             getChildFragmentManager().beginTransaction()
@@ -77,15 +78,7 @@ public class InternalFragmentHolder extends Fragment {
     }
 
 
-    public void switchFragments(){
 
-        toolBox.toGetIn.setVisibility(View.VISIBLE);
-        TranslateAnimation anim = new TranslateAnimation(1000,0,0,0);
-        anim.setDuration(400);
-        anim.setInterpolator(new OvershootInterpolator());
-        toolBox.toGetIn.startAnimation(anim);
-
-    }
 
     public void switchFragments2(){
 

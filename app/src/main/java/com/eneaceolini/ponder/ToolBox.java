@@ -21,8 +21,9 @@ public class ToolBox {
     CollectionCard.DemoCollectionPagerAdapter toNotifyAdapter = null;
     CollectionCard myColl;
     NonSwipeableViewPager lowerViewPager ;
-    public InternalFragmentHolder callToSwitch;
+    public NextPageFragment callToSwitch;
     public ViewPager toGetIn;
+    public boolean wantsToLogOut = false;
 
 
 

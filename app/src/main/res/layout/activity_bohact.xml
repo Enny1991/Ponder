@@ -14,86 +14,148 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/owl_icon_ponder2"
-            android:id="@+id/my_photo" />
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="38dp"
+            android:id="@+id/my_photo"
+            />
     </LinearLayout>
 
     <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"></LinearLayout>
+
+    <LinearLayout
         android:orientation="horizontal"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="My Email:  "
-            android:id="@+id/textView8" />
+            android:id="@+id/my_email_solid"
+            android:textSize="20dp"
+            android:textColor="#000000" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
+            android:textColor="#000000"
             android:layout_height="wrap_content"
-            android:text="New Text"
             android:id="@+id/my_email"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:textSize="20dp" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/my_email_but"
+            android:background="@drawable/ic_write" />
 
 
     </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="#000000"
             android:text="My Location:  "
-            android:id="@+id/textView9" />
+            android:textSize="20dp"
+            android:id="@+id/my_location_solid" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="New Text"
-            android:id="@+id/my_location" />
+            android:textColor="#000000"
+            android:id="@+id/my_location"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:textSize="20dp"
+            android:gravity="center_horizontal" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/my_location_but"
+            android:background="@drawable/ic_write" />
 
 
     </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="My Language:  "
-            android:id="@+id/textView12" />
+            android:textColor="#000000"
+            android:textSize="20dp"
+            android:id="@+id/my_language_solid" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="New Text"
-            android:id="@+id/my_language" />
+            android:textColor="#000000"
+            android:textSize="20dp"
+            android:id="@+id/my_language"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:gravity="center_horizontal" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/my_language_but"
+            android:background="@drawable/ic_write" />
 
 
     </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Notify Me:  "
-            android:id="@+id/textView10" />
+            android:textSize="20dp"
+            android:textColor="#000000"
+            android:id="@+id/my_notify_solid" />
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="New Text"
-            android:id="@+id/my_notify" />
+            android:textColor="#000000"
+            android:id="@+id/my_notify"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:textSize="20dp"
+            android:gravity="center_horizontal" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/my_notify_but"
+            android:background="@drawable/ic_write" />
 
 
     </LinearLayout>

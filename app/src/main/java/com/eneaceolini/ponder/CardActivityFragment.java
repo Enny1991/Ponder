@@ -106,7 +106,7 @@ public class CardActivityFragment extends Fragment  {
             }
         });
 
-        new LoadImages(getActivity(),"").execute("");
+        //new LoadImages(getActivity(),"").execute("");
         return rootView;
     }
 

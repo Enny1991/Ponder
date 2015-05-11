@@ -126,6 +126,8 @@ public class CardPlusMap extends Fragment{
         public Fragment getItem(int i) {
             switch (i) {
                 case 0:
+                    return new OnlyCardFragment();
+                case 1:
                     Log.d( "CREATE","0");
                     CardActivityFragment a = new CardActivityFragment();
                     a.obj = obj;
@@ -139,7 +141,7 @@ public class CardPlusMap extends Fragment{
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
 
         @Override

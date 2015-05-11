@@ -236,7 +236,7 @@ public class DoubleHolder extends ActionBarActivity {
             switch (i) {
                 case 0:
                     Log.d("CREATE","0");
-                    return new OnlyCardFragment(null,maxWidth,maxHeight);
+                    return null;
                 case 1:
                     Log.d( "CREATE","1");
                     CardActivityFragment a = new CardActivityFragment();

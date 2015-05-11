@@ -27,10 +27,11 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/owl_icon_ponder2"
-        android:logo="@drawable/owl_icon_ponder2"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:theme="@style/AppTheme"
-        android:largeHeap="true" >
+        android:logo="@drawable/owl_icon_ponder2"
+ >
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
@@ -62,13 +63,15 @@
 
         <activity
             android:name=".FragmentHolderTest"
-            android:parentActivityName=".MainActivity"
             android:icon="@drawable/owl_icon_ponder2"
             android:logo="@drawable/owl_icon_ponder2"
             android:screenOrientation="portrait" >
         </activity>
+
         <activity
-            android:name=".ToDelete"
+            android:name=".ToDeleteActivity"
+            android:theme="@style/AppTheme2"
+            android:parentActivityName=".FragmentHolderTest"
             android:label="@string/title_activity_to_delete" >
         </activity>
     </application>

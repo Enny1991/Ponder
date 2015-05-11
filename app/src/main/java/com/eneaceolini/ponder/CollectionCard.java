@@ -10,6 +10,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -25,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -53,8 +56,10 @@ public class CollectionCard extends Fragment{
     DemoCollectionPagerAdapter mDemoCollectionPagerAdapter;
     public static ImageView[] listOfViews;
     ViewPager mViewPager;
-    public ToolBox toolBox;
-    static Context context;
+    static public ToolBox toolBox;
+    static CollectionCard context;
+    static Context cc;
+    private Button deleteFromDB;
 
     public CollectionCard() {
     }
@@ -124,7 +129,10 @@ public class CollectionCard extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        context = getActivity();
+        context = this;
+
+        cc = getActivity();
+
         Typeface typeFace = Typeface.createFromAsset(getActivity().getAssets(),
                 "fonts/Cookie-Regular.ttf");
         Typeface typeFace2 = Typeface.createFromAsset(getActivity().getAssets(),
@@ -138,7 +146,7 @@ public class CollectionCard extends Fragment{
         //Bitmap bm = BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.img1);
         //bm = getResizedBitmap(bm,maxHeight,maxWidth);
         while(cursor.moveToNext()){
-            listCard.add(new CardModel(cursor.getString(1),
+            listCard.add(new CardModel(cursor.getInt(10),cursor.getString(1),
                     cursor.getString(4),
                     cursor.getString(6),
                     cursor.getString(7),
@@ -161,6 +169,7 @@ public class CollectionCard extends Fragment{
         toolBox.myColl = this;
         mViewPager = (ViewPager) rootView.findViewById(R.id.pager);
         mViewPager.setAdapter(mDemoCollectionPagerAdapter);
+
         return rootView;
     }
 
@@ -178,10 +187,11 @@ public class CollectionCard extends Fragment{
 
         @Override
         public Fragment getItem(int i) {
-            Fragment fragment = new DemoObjectFragment();
+            DemoObjectFragment fragment = new DemoObjectFragment();
             Bundle args = new Bundle();
-            args.putInt(DemoObjectFragment.ARG_OBJECT, i );
+            args.putInt(DemoObjectFragment.ARG_OBJECT, i);
             fragment.setArguments(args);
+            fragment.setContext(context);
             return fragment;
         }
 
@@ -192,12 +202,14 @@ public class CollectionCard extends Fragment{
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return "OBJECT " + (position + 1);
+            return "" + (position + 1)+" / "+getCount();
         }
     }
 
 
-    public void changeDataSet(){
+
+
+    public void changeDataSet(int position){
         Typeface typeFace = Typeface.createFromAsset(getActivity().getAssets(),
                 "fonts/Cookie-Regular.ttf");
         Typeface typeFace2 = Typeface.createFromAsset(getActivity().getAssets(),
@@ -211,7 +223,7 @@ public class CollectionCard extends Fragment{
         //bm = getResizedBitmap(bm,maxHeight,maxWidth);
         listCard = new Vector<>();
         while(cursor.moveToNext()){
-            listCard.add(new CardModel(cursor.getString(1),
+            listCard.add(new CardModel(cursor.getInt(10),cursor.getString(1),
                     cursor.getString(4),
                     cursor.getString(6),
                     cursor.getString(7),
@@ -221,29 +233,98 @@ public class CollectionCard extends Fragment{
                     cursor.getString(2),
                     null,
                     typeFace,typeFace2,0.0,0.0));
+        }
+        db.close();
+        cursor.close();
+        if(position > -1) {
+            mDemoCollectionPagerAdapter = new DemoCollectionPagerAdapter(getChildFragmentManager());
+            // Set up the ViewPager, attaching the adapter.
 
+            toolBox.toNotifyAdapter = mDemoCollectionPagerAdapter;
+
+            mViewPager.setAdapter(mDemoCollectionPagerAdapter);
+            mViewPager.setCurrentItem(position);
         }
     }
 
     public static class DemoObjectFragment extends Fragment {
 
+        int index2;
+        static int index;
+        Button delete,save,pop;
+        private TextView counter ;
+        public CollectionCard context;
         public static final String ARG_OBJECT = "object";
+
+        public void setContext(CollectionCard c){
+            context = c;
+        }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_collection_object, container, false);
             Bundle args = getArguments();
+            final ImageView mImageView = (ImageView)rootView.findViewById(R.id.image);
+            final ProgressBar prog = (ProgressBar)rootView.findViewById(R.id.prog);
+
+            delete = (Button) rootView.findViewById(R.id.delete_button);
+            delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    deleteFromDB(v);
+                }
+            });
+
+            pop = (Button) rootView.findViewById(R.id.button4);
+            pop.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CardModel toPass = listCard.get(index2);
+                    Drawable d = mImageView.getDrawable();
+                    Bitmap bitmap = ((BitmapDrawable) d).getBitmap();
+                    toPass.setCardImageDrawable(bitmap);
+                    toolBox.callToSwitch.mainActivity.startDelete(toPass);
+
+
+                }
+            });
+
+            save = (Button)rootView.findViewById(R.id.save_button);
+            save.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //deleteFromDB(v);
+                    Log.d("CLicked", "SAVE");
+                }
+            });
+
+            if(listCard.get(args.getInt(ARG_OBJECT)).getSpk().trim().toString().equals("")
+                    || listCard.get(args.getInt(ARG_OBJECT)).getSpk().trim().toString().equals(null)
+                    || listCard.get(args.getInt(ARG_OBJECT)).getSpk().equals(" ")){
+                (rootView.findViewById(R.id.spk)).setVisibility(View.GONE);
+            }else {
+                ((TextView) rootView.findViewById(R.id.spk)).setText(
+                        listCard.get(args.getInt(ARG_OBJECT)).getSpk());
+            }
+
 
             ((TextView) rootView.findViewById(R.id.title)).setText(
                     listCard.get(args.getInt(ARG_OBJECT)).getTitle());
-            ((TextView) rootView.findViewById(R.id.spk)).setText(
-                    listCard.get(args.getInt(ARG_OBJECT)).getSpk());
-            ((TextView) rootView.findViewById(R.id.series)).setText(
-                    listCard.get(args.getInt(ARG_OBJECT)).getSeries());
-            final ImageView mImageView = (ImageView)rootView.findViewById(R.id.image);
-            final ProgressBar prog = (ProgressBar)rootView.findViewById(R.id.prog);
-            final int index = args.getInt(ARG_OBJECT);
+
+            if(listCard.get(args.getInt(ARG_OBJECT)).getSeries().trim().toString().equals("")
+                    || listCard.get(args.getInt(ARG_OBJECT)).getSeries().trim().toString().equals(null)
+                    || listCard.get(args.getInt(ARG_OBJECT)).getSeries().equals(" ")
+                    || listCard.get(args.getInt(ARG_OBJECT)).getSeries().equals("null")){
+                (rootView.findViewById(R.id.series)).setVisibility(View.GONE);
+            }else {
+                ((TextView) rootView.findViewById(R.id.series)).setText(
+                        listCard.get(args.getInt(ARG_OBJECT)).getSeries());
+            }
+
+
+            index= args.getInt(ARG_OBJECT);
+            index2 = args.getInt(ARG_OBJECT);
 
             new Thread(new Runnable() {
                 public void run() {
@@ -264,71 +345,89 @@ public class CollectionCard extends Fragment{
 
             return rootView;
         }
+
+        public void deleteFromDB(View v){
+            //TODO add a contextual dialog
+            DatabaseHelper dbHelper = new DatabaseHelper(cc);
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            Log.d("title",listCard.get(index2).getTitle());
+            String query = "SELECT * FROM talks ORDER BY _id ASC";
+
+
+            int a = db.delete(TableNotes.TABLE_NAME_2, TableNotes.COLUMN_UID + " = " + listCard.get(index2).getId(), null);
+            Log.d("DELETED RESULT", "" + a);
+            db.close();
+            context.changeDataSet(index2);
+
+
+        }
     }
 
+
+    static class LoadImages extends AsyncTask<String, Void, Bitmap> {
+
+        Context context;
+        String URL;
+
+        public LoadImages(String URL){
+            this.URL = URL;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... arg0) {
+
+            Bitmap bmp = null;
+            try {
+
+
+                bmp = BitmapFactory.decodeStream((InputStream)
+                        new java.net.URL(URL).getContent());
+                //Log.d("Load Images","Gooood");
+
+
+
+            } catch (MalformedURLException e) {
+                //bmp = BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.img1);
+                //e.printStackTrace();
+                //((ImageView) rootView.findViewById(R.id.image)).setImageBitmap(bmp);
+                Log.e("Loading Images","Malformed URL");
+
+            } catch (IOException e) {
+                //bmp = BitmapFactory.decodeResource(getResources(), R.drawable.img1);
+                //e.printStackTrace();
+                //((ImageView) rootView.findViewById(R.id.image)).setImageBitmap(bmp);
+                Log.e("Loading Images","IO Problem");
+
+            }
+
+            try {
+                //bmp = getResizedBitmap(bmp, maxHeight, maxWidth);
+
+
+            }catch(Exception e){
+                //bmp = BitmapFactory.decodeResource(getResources(), R.drawable.img1);
+                //bmp = getResizedBitmap(bmp, maxHeight, maxWidth);
+
+                Log.e("Loading Images","An image is null");
+            }
+
+
+            return bmp;
+        }
+
+
+
+
+
+        @Override
+        protected void onPostExecute(Bitmap bmp){ //POPULATE
+
+
+        }
+
+    }
 
 }
 
 
-class LoadImages extends AsyncTask<String, Void, Bitmap> {
 
-    Context context;
-    String URL;
-
-    public LoadImages(String URL){
-        this.URL = URL;
-    }
-
-    @Override
-    protected Bitmap doInBackground(String... arg0) {
-
-        Bitmap bmp = null;
-        try {
-
-
-            bmp = BitmapFactory.decodeStream((InputStream)
-                    new java.net.URL(URL).getContent());
-            Log.d("Load Images","Gooood");
-
-
-
-        } catch (MalformedURLException e) {
-            //bmp = BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.img1);
-            //e.printStackTrace();
-            //((ImageView) rootView.findViewById(R.id.image)).setImageBitmap(bmp);
-            Log.e("Loading Images","Malformed URL");
-
-        } catch (IOException e) {
-            //bmp = BitmapFactory.decodeResource(getResources(), R.drawable.img1);
-            //e.printStackTrace();
-            //((ImageView) rootView.findViewById(R.id.image)).setImageBitmap(bmp);
-            Log.e("Loading Images","IO Problem");
-
-        }
-
-        try {
-            //bmp = getResizedBitmap(bmp, maxHeight, maxWidth);
-
-
-        }catch(Exception e){
-            //bmp = BitmapFactory.decodeResource(getResources(), R.drawable.img1);
-            //bmp = getResizedBitmap(bmp, maxHeight, maxWidth);
-
-            Log.e("Loading Images","An image is null");
-        }
-
-
-        return bmp;
-    }
-
-
-
-
-
-    @Override
-    protected void onPostExecute(Bitmap bmp){ //POPULATE
-
-
-    }
-
-}

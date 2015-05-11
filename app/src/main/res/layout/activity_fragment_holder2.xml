@@ -4,7 +4,11 @@
     tools:context="com.eneaceolini.ponder.FragmentHolder" tools:ignore="MergeRootFrame"
     android:orientation="vertical">
 
-
+    <include
+        android:id="@+id/tool_bar"
+        layout="@layout/tool_bar"
+>
+    </include>
 
     <com.eneaceolini.ponder.NonSwipeableViewPager xmlns:android="http://schemas.android.com/apk/res/android"
 android:id="@+id/pager"

@@ -24,7 +24,7 @@ class DatabaseHelper extends SQLiteOpenHelper {
         create += "  " + TableNotes.COLUMN_ID + " INTEGER PRIMARY KEY,";
         create += "  " + TableNotes.COLUMN_EMAIL + " TEXT NOT NULL,";
         create += "  " + TableNotes.COLUMN_PASSWORD + " TEXT NOT NULL,";
-        create += "  " + TableNotes.COLUMN_LANGUAGE + " TEXT NOT NULL,";
+        create += "  " + TableNotes.COLUMN_LANGUAGE + " TEXT,";
         create += "  " + TableNotes.COLUMN_LOCATION + " TEXT,";
         create += "  " + TableNotes.COLUMN_TAGS + " TEXT";
         create += ")";
@@ -41,7 +41,8 @@ class DatabaseHelper extends SQLiteOpenHelper {
         create += "  " + TableNotes.COLUMN_DATE + " TEXT,";
         create += "  " + TableNotes.COLUMN_TIME + " TEXT,";
         create += "  " + TableNotes.COLUMN_IMG + " BLOB,";
-        create += "  " + TableNotes.COLUMN_ABSTRACT + " TEXT";
+        create += "  " + TableNotes.COLUMN_ABSTRACT + " TEXT,";
+        create += "  " + TableNotes.COLUMN_UID + " INTEGER";
         create += ")";
         db.execSQL(create);
 

@@ -16,29 +16,35 @@ import android.widget.ImageView;
  */
 public class OnlyCardFragment extends Fragment {
 
+    private static final String ARG_PARAM1 = "card";
+    private static final String ARG_PARAM2 = "param2";
+
     PositionFirstCard myPosition;
     int width,height;
     InternalFragmentHolder a;
+    ToolBox toolBox;
+    CardModel obj;
 
-    public OnlyCardFragment(InternalFragmentHolder a){
-        this.a = a;
+    public static OnlyCardFragment newInstance(CardModel card) {
+        OnlyCardFragment fragment = new OnlyCardFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(ARG_PARAM1, card);
+        //args.putString(ARG_PARAM2, param2);
+        fragment.setArguments(args);
+        return fragment;
     }
 
-    public OnlyCardFragment(PositionFirstCard a,int width,int height){
-        myPosition = a;
-        this.width = width;
-        this.height = height;
-    }
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        if (getArguments() != null) {
+            obj = getArguments().getParcelable(ARG_PARAM1);
+        }
+        toolBox = ToolBox.getInstance();
         View rootView = inflater.inflate(R.layout.simple_card,container,false);
-        ((ImageView) rootView.findViewById(R.id.img_roll)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                a.switchFragments2();
-            }
-        });
+        ((ImageView) rootView.findViewById(R.id.img_roll)).setImageBitmap(toolBox.myPhoto);
         //((ImageView) rootView.findViewById(R.id.img_roll)).setX(myPosition.x);
         //((ImageView) rootView.findViewById(R.id.img_roll)).setY(myPosition.y);
         //Bitmap bmp = myPosition.card.getCardImageDrawable();
@@ -77,31 +83,12 @@ public class OnlyCardFragment extends Fragment {
         return resizedBitmap;
     }
 
-    /*
+
     @Override
     public void onPause() {
-        b = loadBitmapFromView(getView());
         super.onPause();
     }
 
-    public static Bitmap loadBitmapFromView(View v) {
-        Bitmap b = Bitmap.createBitmap(v.getWidth(),
-                v.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(b);
-        v.layout(0, 0, v.getWidth(),
-                v.getHeight());
-        v.draw(c);
-        return b;
-    }
 
-    @Override
-    public void onDestroyView() {
-        BitmapDrawable bd = new BitmapDrawable(b);
-        getView().findViewById(R.id.pager).setBackground(bd);
-        b = null;
-        super.onDestroyView();
-    }
 
-    Bitmap b;
-*/
 }

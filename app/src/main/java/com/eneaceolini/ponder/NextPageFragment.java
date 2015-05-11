@@ -26,6 +26,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.transition.AutoTransition;
+import android.transition.Scene;
+import android.transition.Transition;
+import android.transition.TransitionManager;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -36,6 +40,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
@@ -45,6 +50,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -103,12 +109,18 @@ public class NextPageFragment extends Fragment implements TokenCompleteTextView.
     TextView sorry;
     DemoCollectionPagerAdapter mDemoCollectionPagerAdapter;
     ViewPager mViewPager;
+    //scenes to transition
+    private Scene scene1, scene2;
+    //transition to move between scenes
+    private Transition transition;
+    //flag to swap between scenes
+    private boolean start;
 
 
 
     protected final String SPEAKER = "speaker_name" , TITLE="title" , URL = "pic_cached" ,
             SERIES = "talk_series",FROM = "speaker_from",
-            DATE = "start_time_date", ABSTRACT = "talk_abstract";
+            DATE = "start_time_date", ABSTRACT = "talk_abstract", ID = "id";
 
     public NextPageFragment() {
     }
@@ -149,15 +161,33 @@ public class NextPageFragment extends Fragment implements TokenCompleteTextView.
         Log.d("little","comment for GitHub");
         rootView = inflater.inflate(R.layout.activity_next_page, container, false);
         context = this;
+        toolBox.callToSwitch=this;
 
-        mDemoCollectionPagerAdapter = new DemoCollectionPagerAdapter(getChildFragmentManager());
 
         // Set up the ViewPager, attaching the adapter.
-        mViewPager = (ViewPager) rootView.findViewById(R.id.to_get_in);
-        mViewPager.setAdapter(mDemoCollectionPagerAdapter);
+
+        //get the layout ID
+        RelativeLayout baseLayout = (RelativeLayout)rootView.findViewById(R.id.base);
+
+        //first scene
+        ViewGroup startViews = (ViewGroup)mainActivity.getLayoutInflater()
+                .inflate(R.layout.activity_next_page, baseLayout, false);
+
+        //second scene
+        ViewGroup endViews = (ViewGroup)mainActivity.getLayoutInflater()
+                .inflate(R.layout.roll_for_dialog, baseLayout, false);
+
+
+        mViewPager = (ViewPager) endViews.findViewById(R.id.pager);
+
         mViewPager.setOffscreenPageLimit(3);
-        mViewPager.setX(-1000);
-        toolBox.toGetIn = mViewPager;
+
+
+        //create the two scenes
+
+        //initialize flag
+        start=true;
+
 
         typeFace = Typeface.createFromAsset(getActivity().getAssets(),
                                                                 "fonts/Cookie-Regular.ttf");
@@ -179,7 +209,7 @@ public class NextPageFragment extends Fragment implements TokenCompleteTextView.
 
         progBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
         progBar.setIndeterminate(true);
-        progBar.getIndeterminateDrawable().setColorFilter(new LightingColorFilter(0xFF000000, 0x389289));
+        progBar.getIndeterminateDrawable().setColorFilter(new LightingColorFilter(0xFF000000, 0x2A86C0));
         //tagLayout = (LinearLayout)rootView.findViewById(R.id.tagLayout);
 
         //CheckConnection
@@ -229,6 +259,14 @@ public class NextPageFragment extends Fragment implements TokenCompleteTextView.
                 toolBox.adapter=null;
                 toolBox.cardPassed=0;
 
+                InputMethodManager inputManager =
+                        (InputMethodManager) mainActivity.
+                                getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.hideSoftInputFromWindow(
+                        mainActivity.getCurrentFocus().getWindowToken(),
+                        InputMethodManager.HIDE_NOT_ALWAYS);
+
+
             }
         });
 /*
@@ -265,7 +303,29 @@ public class NextPageFragment extends Fragment implements TokenCompleteTextView.
 
         people = new Person[]{
                 new Person("This Week"),
+                new Person("Advanced Research Computing"),
+                new Person("Advanced Materials"),
+                new Person("African Studies"),
+                new Person("African Economies"),
+                new Person("Ageing"),
+                new Person("America"),
+                new Person("Business"),
+                new Person("Biochemistry"),
+                new Person("Biomedical Engineering"),
+                new Person("Bionanotechnology"),
+                new Person("Brazilian Studies"),
+                new Person("Buddhist Studies"),
+                new Person("Anaesthetics"),
+                new Person("Armed Conflict"),
+                new Person("Applied Mathematics"),
+                new Person("Ancient Documents"),
+                new Person("Financial Reserch"),
+                new Person("Emerging Infections"),
+                new Person("Wildlife Conservation"),
+
                 new Person("Neuroscience"),
+
+
                 new Person("Physics"),
                 new Person("Within 200 Km from Zurich")
         };
@@ -399,7 +459,7 @@ public class NextPageFragment extends Fragment implements TokenCompleteTextView.
                     }
                     result = sb.toString();
                 } catch (Exception e) {
-                    // Oops
+                    Log.e("Search","error in seracing");
                 }
                 finally {
                     try{if(inputStream != null)inputStream.close();}catch(Exception squish){}
@@ -418,8 +478,11 @@ public class NextPageFragment extends Fragment implements TokenCompleteTextView.
                         String reformSTRDate;
                         String reformSTRTime;
 
-                        if(jsonArray.length() == 0)
-                            sorry.setVisibility(View.VISIBLE);
+                        if(jsonArray.length() == 0){
+                            //build dialog
+                            showNoTalks();
+                        }
+
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject c = jsonArray.getJSONObject(i);
                         reformSTRDate = myFormat_date.format(fromUser.parse(c.getString(DATE)));
@@ -453,7 +516,7 @@ public class NextPageFragment extends Fragment implements TokenCompleteTextView.
 
                         try {
                             bmp = getResizedBitmap(bmp, maxHeight, maxWidth);
-                            cardInfoVector.add(new CardInfo(c.getString(URL), bmp
+                            cardInfoVector.add(new CardInfo(c.getInt(ID),c.getString(URL), bmp
                                     , c.getString(SPEAKER), c.getString(TITLE)
                                     , c.getString(SERIES), c.getString(FROM),
                                     reformSTRDate, reformSTRTime, c.getString(ABSTRACT),
@@ -463,7 +526,7 @@ public class NextPageFragment extends Fragment implements TokenCompleteTextView.
                         }catch(Exception e){
                             bmp = BitmapFactory.decodeResource(getResources(), R.drawable.img1);
                             bmp = getResizedBitmap(bmp, maxHeight, maxWidth);
-                            cardInfoVector.add(new CardInfo(c.getString(URL), bmp
+                            cardInfoVector.add(new CardInfo(c.getInt(ID),c.getString(URL), bmp
                                     , c.getString(SPEAKER), c.getString(TITLE)
                                     , c.getString(SERIES), c.getString(FROM),
                                     reformSTRDate, reformSTRTime, c.getString(ABSTRACT),
@@ -514,7 +577,8 @@ public class NextPageFragment extends Fragment implements TokenCompleteTextView.
                     for(int i=0;i<cardInfoVector.size();i++){
                         cover=cardInfoVector.elementAt(i).speaker;
                          if(cover.equals("null")) cover = " ";
-                        adapter.add(new CardModel(cardInfoVector.elementAt(i).URL,
+                        adapter.add(new CardModel(cardInfoVector.elementAt(i).id,
+                                cardInfoVector.elementAt(i).URL,
                                 cardInfoVector.elementAt(i).from,
                                 cardInfoVector.elementAt(i).date,
                                 cardInfoVector.elementAt(i).time,
@@ -576,10 +640,12 @@ public class NextPageFragment extends Fragment implements TokenCompleteTextView.
         Bitmap url;
         String URL, speaker,title,series,from,date, time,abst;
         Double LAT, LONG;
+        int id;
 
 
-        public CardInfo(String URL,Bitmap url, String speaker, String title, String series,
+        public CardInfo(int id,String URL,Bitmap url, String speaker, String title, String series,
                         String from, String date, String time, String abst,Double LAT, Double LONG){
+            this.id = id;
             this.URL = URL;
             this.url = url;
             this.speaker = speaker;
@@ -697,12 +763,16 @@ String ss="";
         public Fragment getItem(int i) {
             switch (i) {
                 case 0:
-                    return new OnlyCardFragment(toolBox.callToSwitch);
+                    return new OnlyCardFragment();
                 case 1:
-
-                    return new OnlyCardFragment(toolBox.callToSwitch);
+                    Log.d( "CREATE","0");
+                    CardActivityFragment a = new CardActivityFragment();
+                    a.obj = obj;
+                    //a.key = globalKey;
+                    return a;
                 default:
-                    return new OnlyCardFragment(toolBox.callToSwitch);
+                    Log.d("CREATE","1");
+                    return new MapFragmentD(obj);
             }
         }
 
@@ -717,5 +787,50 @@ String ss="";
         }
     }
 
+    CardModel obj;
+
+    public void startTransition(CardModel obj){
+        //Intent i = new Intent(this,ToDeleteActivity.class);
+        /*
+        this.obj = obj;
+        mDemoCollectionPagerAdapter = new DemoCollectionPagerAdapter(getChildFragmentManager());
+        mViewPager.setAdapter(mDemoCollectionPagerAdapter);
+        TransitionManager.go(scene2, transition);
+        start=false;
+        */
+    }
+    public void startTransition2(){
+        //this.obj = obj;
+        mDemoCollectionPagerAdapter = null;
+        mViewPager.setAdapter(mDemoCollectionPagerAdapter);
+        start=false;
+    }
+
+
+    Dialog dialogNoTalks;
+    public void showNoTalks(){
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                dialogNoTalks = new Dialog(getActivity(),R.style.PauseDialog);
+                dialogNoTalks.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialogNoTalks.setContentView(R.layout.for_dialog_text);
+                TextView a = (TextView)dialogNoTalks.findViewById(R.id.message);
+                a.setTypeface(typeFace);
+                a.setText("Sorry!! No Talks for the specified TAGS");
+                Button one =(Button)dialogNoTalks.findViewById(R.id.button3);
+                one.setTypeface(typeFace);
+                one.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialogNoTalks.dismiss();
+                    }
+                });
+                dialogNoTalks.show();
+            }
+        });
+
+    }
 
 }

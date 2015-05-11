@@ -21,6 +21,8 @@ import android.os.AsyncTask;
 import android.os.Parcelable;
 import android.os.StrictMode;
 import android.support.v7.app.ActionBarActivity;
+import android.transition.Scene;
+import android.transition.Transition;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -81,6 +83,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
     public FragmentHolderTest mainActivity;
     public NextPageFragment callingFragment;
     public ToolBox toolBox;
+
 
 
 
@@ -205,11 +208,20 @@ public class CardContainer extends AdapterView<ListAdapter> {
             secTopCard = getChildAt(getChildCount() -2);
             if(secTopCard != null) secTopCard.setLayerType(LAYER_TYPE_HARDWARE,null);
             mTopCard = getChildAt(getChildCount() - 1);
+            if(mTopCard != null)mTopCard.setOnClickListener(new MySpecialClick());
             mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
         }
         mNumberOfCards = getAdapter().getCount();
         selectedItemIndex = 0;
         requestLayout();
+    }
+
+    public class MySpecialClick implements View.OnClickListener{
+
+        @Override
+        public void onClick(View v){
+            callingFragment.mainActivity.startDelete((CardModel) getAdapter().getItem(selectedItemIndex));
+        }
     }
 
     private void ensureFull() {
@@ -582,6 +594,8 @@ public class CardContainer extends AdapterView<ListAdapter> {
             secTopCard = getChildAt(getChildCount() - 3);
             //if (secTopCard != null) secTopCard.setAlpha(1);
             mTopCard = getChildAt(getChildCount() - 2);
+            if(mTopCard != null)mTopCard.setOnClickListener(new MySpecialClick());
+
             //if (mTopCard != null) mTopCard.setAlpha(1);
             cardModel = (CardModel) getAdapter().getItem(0);
 
@@ -649,6 +663,8 @@ public class CardContainer extends AdapterView<ListAdapter> {
             secTopCard = getChildAt(getChildCount() - 3);
             //if (secTopCard != null) secTopCard.setAlpha(1);
             mTopCard = getChildAt(getChildCount() - 2);
+            if(mTopCard != null)mTopCard.setOnClickListener(new MySpecialClick());
+
             //if (mTopCard != null) mTopCard.setAlpha(1);
             CardModel cardModel = (CardModel) getAdapter().getItem(0);
 
@@ -727,11 +743,12 @@ public class CardContainer extends AdapterView<ListAdapter> {
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e)
         {
-
-            //mainActivity.switchFragments(cardModel);
-
+            //callingFragment.startTransition((CardModel) getAdapter().getItem(selectedItemIndex));
+            /*
             final View topCard = mTopCard;
-            RelativeLayout par = (RelativeLayout)(topCard.getParent()).getParent();
+            final RelativeLayout par = (RelativeLayout)(topCard.getParent()).getParent();
+            final RelativeLayout l = (RelativeLayout)par.getParent();
+
             final int initW = topCard.getWidth();
             final int initH = topCard.getHeight();
             final LinearLayout sView = (LinearLayout) par.getChildAt(1);
@@ -749,7 +766,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
-
+                    par.setVisibility(GONE);
                 }
                 @Override
                 public void onAnimationRepeat(Animation animation) {
@@ -759,18 +776,20 @@ public class CardContainer extends AdapterView<ListAdapter> {
 
             TranslateAnimation anim2 = new TranslateAnimation(0,0,0,((CardContainer)topCard.getParent()).getHeight());
             anim2.setDuration(800);
+            anim2.setFillAfter(true);
+            anim.setFillAfter(true);
             anim2.setInterpolator(new AnticipateOvershootInterpolator());
 
 
-            TranslateAnimation anim3 = new TranslateAnimation(0,1000,0,0);
-            toolBox.toGetIn.setVisibility(View.VISIBLE);
-            anim3.setDuration(800);
-            anim3.setInterpolator(new OvershootInterpolator());
-            anim3.setStartOffset(400);
-            anim3.setFillAfter(true);
-            toolBox.toGetIn.startAnimation(anim3);
 
 
+            AlphaAnimation anim4 = new AlphaAnimation(0,1);
+            anim4.setDuration(800);
+            anim4.setFillAfter(true);
+
+            //anim4.setStartOffset(400);
+            toolBox.toGetIn.startAnimation(anim4);
+            //toolBox.callToSwitch.switchFragments();
             sView.startAnimation(anim);
             topCard.startAnimation(anim2);
 
@@ -917,6 +936,8 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 secTopCard = getChildAt(getChildCount() - 3);
                 //if(secTopCard!=null) secTopCard.setAlpha(1);
                 mTopCard = getChildAt(getChildCount() - 2);
+                if(mTopCard != null)mTopCard.setOnClickListener(new MySpecialClick());
+
                 //if(mTopCard!=null)mTopCard.setAlpha(1);
                 CardModel cardModel = (CardModel)getAdapter().getItem(0);
 
@@ -1027,6 +1048,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
             DatabaseHelper dbHelper = new DatabaseHelper(mainActivity);
             SQLiteDatabase db = dbHelper.getWritableDatabase();
             ContentValues values = new ContentValues();
+            values.put(TableNotes.COLUMN_UID, toInsert.getId());
             values.put(TableNotes.COLUMN_URL, toInsert.geturl());
             values.put(TableNotes.COLUMN_SPK, toInsert.getSpk());
             values.put(TableNotes.COLUMN_TITLE,toInsert.getTitle());
@@ -1039,7 +1061,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
             long id = db.insertOrThrow(TableNotes.TABLE_NAME_2, null, values);
             db.close();
             Log.d("PONDER DB", "Insert in " + id);
-            toolBox.myColl.changeDataSet();
+            toolBox.myColl.changeDataSet(-1);
             return true;
         }
 

@@ -29,6 +29,7 @@ public class CardModel implements Parcelable {
 	private Drawable cardLikeImageDrawable;
 	private Drawable cardDislikeImageDrawable;
     private LatLng latLng;
+    private int id;
 
     private OnCardDimissedListener mOnCardDimissedListener = null;
 
@@ -54,6 +55,7 @@ public class CardModel implements Parcelable {
         this.title = parcel.readString();
         this.spk = parcel.readString();
         this.latLng = new LatLng(parcel.readDouble(),parcel.readDouble());
+        this.id = parcel.readInt();
     }
 
     public void writeToParcel(Parcel out, int flags) {
@@ -68,6 +70,7 @@ public class CardModel implements Parcelable {
         out.writeString(spk);
         out.writeDouble(latLng.latitude);
         out.writeDouble(latLng.longitude);
+        out.writeInt(id);
 
     }
 
@@ -85,11 +88,12 @@ public class CardModel implements Parcelable {
     };
 
 	public CardModel() {
-		this(null,null,null,null,null,null,null, null, (Bitmap)null,(Typeface)null,(Typeface)null,(Double)null,(Double)null);
+		this(0,null,null,null,null,null,null,null, null, (Bitmap)null,(Typeface)null,(Typeface)null,(Double)null,(Double)null);
 	}
 
-	public CardModel(String url, String from, String date, String time, String abst,  String title, String spk,String series, Bitmap cardImage,Typeface typeFace,Typeface typeFace2,Double lat,Double lon) {
+	public CardModel(int id,String url, String from, String date, String time, String abst,  String title, String spk,String series, Bitmap cardImage,Typeface typeFace,Typeface typeFace2,Double lat,Double lon) {
 
+        this.id = id;
         this.url = url;
         this.title = title;
         this.series = series;
@@ -114,6 +118,7 @@ public class CardModel implements Parcelable {
     public String geturl() {
         return url;
     }
+    public int getId() {return id;}
     public String getFrom() {
         return from;
     }

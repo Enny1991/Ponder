@@ -8,9 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -23,6 +27,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -84,7 +90,7 @@ public class MainActivity extends Activity implements OnClickListener,
     private int accessType ;
     private String globalServerKey;
     private String globalServerPass = "";
-
+    private Dialog dialog;
 
     private static final int RC_SIGN_IN = 0;
     // Logcat tag
@@ -97,7 +103,8 @@ public class MainActivity extends Activity implements OnClickListener,
     private GoogleApiClient mGoogleApiClient;
 
     /**
-     * A flag indicating that a PendingIntent is in progress and prevents us
+     * A flag indicating that a PendingIntent is in p
+     * and prevents us
      * from starting further intents.
      */
     private boolean mIntentInProgress;
@@ -127,12 +134,13 @@ public class MainActivity extends Activity implements OnClickListener,
     private LinearLayout loading;
     Facebook fb;
     String APP_ID;
+    Context context ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        context = this;
         //ToolBox
         if(toolBox!=null) toolBox=null;
         else toolBox=ToolBox.getInstance();
@@ -153,7 +161,7 @@ public class MainActivity extends Activity implements OnClickListener,
         //authFB.setText("");
         logginIn = (ProgressBar)findViewById(R.id.progressBar2);
         logginIn.setIndeterminate(true);
-        logginIn.getIndeterminateDrawable().setColorFilter(new LightingColorFilter(0xFF000000, 0xF68C20));
+        logginIn.getIndeterminateDrawable().setColorFilter(new LightingColorFilter(0xFF000000, 0x2A86C0));
 
         loginLayout = (LinearLayout)findViewById(R.id.loginLayout);
         loading = (LinearLayout)findViewById(R.id.loading);
@@ -207,6 +215,38 @@ public class MainActivity extends Activity implements OnClickListener,
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this).addApi(Plus.API)
                 .addScope(Plus.SCOPE_PLUS_LOGIN).build();
+
+        //build dialog
+        dialog = new Dialog(MainActivity.this,R.style.PauseDialog);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.for_dialog_text);
+        TextView a = (TextView)dialog.findViewById(R.id.message);
+        a.setTypeface(typeFace);
+
+        Button one =(Button)dialog.findViewById(R.id.button3);
+        one.setTypeface(typeFace);
+        one.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        //checkDatabase
+        DatabaseHelper dbHelper = new DatabaseHelper(this);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Cursor cursor;
+        String query = "SELECT * FROM personal ORDER BY _id ASC";
+        cursor = db.rawQuery(query,null);
+        //Bitmap bm = BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.img1);
+        //bm = getResizedBitmap(bm,maxHeight,maxWidth);
+        if(cursor.moveToNext()){
+            globalServerKey = cursor.getString(1);
+            globalServerPass = cursor.getString(2);
+            new RetrieveKeyFromServer().execute("login");
+            loading.setVisibility(View.VISIBLE);
+            loginLayout.setVisibility(View.INVISIBLE);
+        }
     }
 
 
@@ -217,7 +257,6 @@ public class MainActivity extends Activity implements OnClickListener,
             onSessionStateChange(session, state, exception);
         }
     };
-
 
 
 
@@ -236,10 +275,7 @@ public class MainActivity extends Activity implements OnClickListener,
 
     private void onSessionStateChange(Session session, SessionState state,
                                       Exception exception) {
-        final ImageView img = (ImageView) findViewById(R.id.profile_image);
-        final TextView name = (TextView) findViewById(R.id.name);
-        final TextView gender = (TextView) findViewById(R.id.gender);
-        final TextView location = (TextView) findViewById(R.id.location);
+
         // When Session is successfully opened (User logged-in)
         if (state.isOpened()) {
             loading.setVisibility(View.VISIBLE);
@@ -253,7 +289,7 @@ public class MainActivity extends Activity implements OnClickListener,
                 public void onCompleted(GraphUser user, Response response) {
                     if (user != null) {
                         // Set view visibility to true
-                        otherView.setVisibility(View.VISIBLE);
+                        //otherView.setVisibility(View.VISIBLE);
                         //Set Image
                         try {
 
@@ -277,18 +313,21 @@ public class MainActivity extends Activity implements OnClickListener,
             }).executeAsync();
 
         } else if (state.isClosed()) {
-            Log.i(TAG, "Logged out...");
-            otherView.setVisibility(View.GONE);
+            Log.d(TAG, "Logged out...");
+            //otherView.setVisibility(View.GONE);
         }
     }
+
+    private Boolean succLogin = true;
 
     class RetrieveKeyFromServer extends AsyncTask<String, Void, Boolean> {
 
         private Exception exception;
+        private String[] myKeys;
 
         protected Boolean doInBackground(String... keys) {
             JSONObject jSonResult = null;
-
+                myKeys = keys;
                 String result = null;
                 InputStream inputStream = null;
                 // retrieve form server info FB
@@ -316,12 +355,18 @@ public class MainActivity extends Activity implements OnClickListener,
                             nameValuePairs = new ArrayList<>(2);
                             nameValuePairs.add(new BasicNameValuePair("username", globalServerKey));
                             nameValuePairs.add(new BasicNameValuePair("password", globalServerPass));
+                            //save to database
+
                             httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
                             break;
                     }
                     //httpclient.execute(httpPost);
 
-                }catch (Exception e){Log.e("Error+",e.toString());}
+                }catch (Exception e){
+                    Log.e("Error+",e.toString());
+                    succLogin = false;
+                }
                 try {
                     HttpResponse response = httpclient.execute(httpPost);
                     HttpEntity entity = response.getEntity();
@@ -360,7 +405,17 @@ public class MainActivity extends Activity implements OnClickListener,
 
 
                 }catch(Exception e){
-                    Log.e("BAD JSon",e.toString());
+                    Log.e("BAD JSon", e.toString());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            loading.setVisibility(View.INVISIBLE);
+                            loginLayout.setVisibility(View.VISIBLE);
+                            dialog.show();
+
+                        }
+                    });
+
                     return false;
                 }
             return true;
@@ -413,7 +468,10 @@ public class MainActivity extends Activity implements OnClickListener,
 
     protected void onStart() {
         super.onStart();
-        mGoogleApiClient.connect();
+        Log.d("Method", "onStart");
+        if(!toolBox.wantsToLogOut) {
+            mGoogleApiClient.connect();
+        }
     }
 
     protected void onStop() {
@@ -426,12 +484,20 @@ public class MainActivity extends Activity implements OnClickListener,
     @Override
     public void onResume() {
         super.onResume();
+        if(toolBox.wantsToLogOut) {
+            loading.setVisibility(View.INVISIBLE);
+            loginLayout.setVisibility(View.VISIBLE);
+            signOutFromGplus();
+            Log.d("Signin","OUT");
+
+        }
         uiHelper.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        Log.d("Method", "onPause");
         uiHelper.onPause();
     }
 
@@ -517,7 +583,7 @@ public class MainActivity extends Activity implements OnClickListener,
         // Get user's information
         getProfileInformation();
         // Update the UI after signin
-        updateUI(true);
+        //updateUI(true);
 
     }
 
@@ -587,7 +653,7 @@ public class MainActivity extends Activity implements OnClickListener,
     @Override
     public void onConnectionSuspended(int arg0) {
         mGoogleApiClient.connect();
-        updateUI(false);
+        //updateUI(false);
     }
 
     @Override
@@ -635,11 +701,13 @@ public class MainActivity extends Activity implements OnClickListener,
      * */
     private void signOutFromGplus() {
         if (mGoogleApiClient.isConnected()) {
+
             Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
             mGoogleApiClient.disconnect();
-            mGoogleApiClient.connect();
-            updateUI(false);
+            //mGoogleApiClient.connect();
+            //updateUI(false);
         }
+        Log.d("Google","Sign out");
     }
 
     /**
@@ -654,7 +722,7 @@ public class MainActivity extends Activity implements OnClickListener,
                         public void onResult(Status arg0) {
                             Log.e(TAG, "User access revoked!");
                             mGoogleApiClient.connect();
-                            updateUI(false);
+                            //updateUI(false);
                         }
 
                     });
@@ -790,14 +858,16 @@ public class MainActivity extends Activity implements OnClickListener,
         Intent enter = new Intent(this, FragmentHolderTest.class);
         enter.putExtra("type",type);
         enter.putExtra("key",key);
-        /*
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                loading.setVisibility(View.GONE);
-            }
-        });
-        */
+        if(succLogin && globalServerKey != null) {
+            DatabaseHelper dbHelper = new DatabaseHelper(context);
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(TableNotes.COLUMN_EMAIL, globalServerKey);
+            values.put(TableNotes.COLUMN_PASSWORD, globalServerPass);
+
+            long id = db.insertOrThrow(TableNotes.TABLE_NAME, null, values);
+            db.close();
+        }
 
         startActivity(enter);
         overridePendingTransition(R.anim.transition1, R.anim.transition2);
@@ -808,6 +878,9 @@ public class MainActivity extends Activity implements OnClickListener,
         globalServerKey = ((TextView)findViewById(R.id.email)).getText().toString();
         globalServerPass = ((TextView)findViewById(R.id.pass)).getText().toString();
         new RetrieveKeyFromServer().execute("login");
+        loading.setVisibility(View.VISIBLE);
+        loginLayout.setVisibility(View.INVISIBLE);
+
     }
 
 
